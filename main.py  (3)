@@ -1,0 +1,38 @@
+import pandas as pd
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+
+# 1. Sample Data (Twitter/Reviews)
+data = {
+    'review': [
+        'I love this product', 'This is amazing', 'Great quality!',
+        'I hate this', 'Very bad experience', 'Worst service ever',
+        'It is okay', 'Could be better', 'Not sure about this'
+    ],
+    'sentiment': ['positive', 'positive', 'positive', 'negative', 'negative', 'negative', 'neutral', 'neutral', 'neutral']
+}
+
+df = pd.DataFrame(data)
+
+# 2. Text to Numbers (Embedding/Vectorization)
+# এখানেই আপনি শিখবেন কীভাবে শব্দকে সংখ্যায় রূপান্তর করতে হয়।
+cv = CountVectorizer()
+X = cv.fit_transform(df['review']).toarray()
+y = df['sentiment']
+
+# 3. Model Training
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+# 4. Real-time Testing
+def predict_sentiment(text):
+    data = cv.transform([text]).toarray()
+    prediction = model.predict(data)
+    return prediction[0]
+
+# টেস্ট করুন
+test_text = "The service was great"
+print(f"Text: {test_text} \nSentiment: {predict_sentiment(test_text)}")
